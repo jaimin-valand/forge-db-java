@@ -1,0 +1,12 @@
+target/
+.idea/
+*.iml
+*.class
+*.bin
+.DS_Store
+build/
+release-artifacts/*.jar
+release-artifacts/*.sha256
+*.db
+*.wal
+*.history

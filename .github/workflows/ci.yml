@@ -1,0 +1,59 @@
+name: ForgeDB CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: forge-db-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Compile
+        run: mvn -B -ntp -q -DskipTests compile
+
+      - name: Test
+        run: mvn -B -ntp -q test
+
+      - name: Dependency-free release gate
+        run: bash scripts/test-gate.sh
+
+      - name: CLI smoke test
+        run: bash scripts/cli-smoke.sh
+
+      - name: Package
+        run: mvn -B -ntp -q -DskipTests package
+
+      - name: Final release validation
+        run: bash scripts/final-release-gate.sh
+
+      - name: Verify artifact
+        run: test -s target/release/forge-db-1.0.0.jar
+
+      - name: Upload release validation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-db-1.0.0
+          path: |
+            target/release/forge-db-1.0.0.jar
+            target/release/forge-db-1.0.0.jar.sha256
+            target/release/release-manifest.json
+          if-no-files-found: error
