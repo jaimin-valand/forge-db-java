@@ -6,8 +6,8 @@ import java.util.*;
 
 public class QueryFeaturesTest {
   @Test void orderByLimitOffsetAndProjectionWork() throws Exception {
-    Path dir=Files.createTempDirectory("forge-query-");
-    Database db=new Database(dir);
+    Path file=Files.createTempDirectory("forge-query-").resolve("db.bin");
+    Database db=new Database(file);
     SqlEngine sql=new SqlEngine(db);
     sql.execute("CREATE TABLE users (id INT PRIMARY KEY, name TEXT NOT NULL)");
     sql.execute("INSERT INTO users VALUES (1, 'Zoe')");
