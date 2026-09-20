@@ -94,8 +94,11 @@ public final class SqlParser {
       else throw error("expected ORDER BY expression");
       if(peek("ASC")||peek("DESC")){ ascending=!peek("DESC"); consume(); }
     }
-    if(accept("LIMIT")){ limit=positiveOrZeroNumber("LIMIT"); }
-    if(accept("OFFSET")){ offset=positiveOrZeroNumber("OFFSET"); }
+    boolean pagination=true; while(pagination){
+      if(accept("LIMIT")){ limit=positiveOrZeroNumber("LIMIT"); }
+      else if(accept("OFFSET")){ offset=positiveOrZeroNumber("OFFSET"); }
+      else pagination=false;
+    }
     expectEof(); return new SqlStatement.Select(explain,cols,table,conditions,orderBy,ascending,limit,offset,join,aggregates,groupBy,having);
   }
   private int positiveOrZeroNumber(String label){ SqlToken t=next(); if(t.type()!=NUMBER) throw error("expected numeric "+label); try { long v=Long.parseLong(t.text()); if(v<0||v>Integer.MAX_VALUE) throw error("invalid "+label); return (int)v; } catch(NumberFormatException e){ throw error("invalid "+label); } }
