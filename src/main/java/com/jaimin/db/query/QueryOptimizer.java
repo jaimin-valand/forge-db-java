@@ -29,11 +29,11 @@ public final class QueryOptimizer {
                     "B+ tree equality lookup + fetch estimated matches"));
             if (indexCost < scanCost) {
                 return new QueryPlan(QueryPlan.Type.INDEX_LOOKUP, table, equality.column(), equality.value(),
-                        "selected lowest-cost equality access path",
+                        "selected lowest-cost equality access path; scanCost=" + scanCost + ", indexCost=" + indexCost,
                         estimatedRows, indexCost, candidates);
             }
             return new QueryPlan(QueryPlan.Type.TABLE_SCAN, table, equality.column(), equality.value(),
-                    "index candidate rejected because estimated scan cost is lower",
+                    "index candidate rejected because estimated scan cost is lower; cost model prefers sequential scan; scanCost=" + scanCost + ", indexCost=" + indexCost,
                     estimatedRows, scanCost, candidates);
         }
 
