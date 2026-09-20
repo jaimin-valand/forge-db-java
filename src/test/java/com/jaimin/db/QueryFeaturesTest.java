@@ -15,6 +15,6 @@ public class QueryFeaturesTest {
     sql.execute("INSERT INTO users VALUES (3, 'Mike')");
     sql.execute("INSERT INTO users VALUES (4, 'Bob')");
     Assertions.assertEquals(List.of(List.of("2","Alice"), List.of("4","Bob")), sql.execute("SELECT id, name FROM users ORDER BY name ASC LIMIT 2"));
-    Assertions.assertEquals(List.of(List.of("3","Mike"), List.of("1","Zoe")), sql.execute("SELECT id, name FROM users ORDER BY name DESC OFFSET 1 LIMIT 2"));
+    Assertions.assertEquals(List.of(List.of("3","Mike"), List.of("4","Bob")), sql.execute("SELECT id, name FROM users ORDER BY name DESC OFFSET 1 LIMIT 2"));
   }
 }
