@@ -21,7 +21,7 @@ public final class SqlParser {
   }
   private SqlStatement.CreateTable parseCreate(){
     consume("CREATE");consume("TABLE");String table=identifier();consume("(");List<SqlStatement.ColumnDef> cols=new ArrayList<>();
-    do { String name=identifier(); String type=identifierOrKeyword(); boolean pk=false, uq=false, nn=false;
+    do { String name=identifier(); String type=(peek(",")||peek(")")) ? "TEXT" : identifierOrKeyword(); boolean pk=false, uq=false, nn=false;
       while(!peek(",")&&!peek(")")){ if(peek("PRIMARY")){consume();consume("KEY");pk=true;} else if(peek("UNIQUE")){consume();uq=true;} else if(peek("NOT")){consume();consume("NULL");nn=true;} else throw error("unexpected column constraint"); }
       cols.add(new SqlStatement.ColumnDef(name,type,pk,uq,nn));
     } while(accept(",")); consume(")"); expectEof(); return new SqlStatement.CreateTable(table,List.copyOf(cols));
